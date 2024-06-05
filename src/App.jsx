@@ -2,26 +2,20 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 import Footer from "./Footer";
 import Header from "./Header";
-import useFetch from "./hooks";
 import { getProducts } from "./services/productService";
 
 export default function App() {
-  const [url, setUrl] = useState("/");
-  async function getUrl() {
-    setUrl(await getProducts("boards"));
-  }
-  getUrl()
-  const p = useFetch(url);
-
-console.log(p);
-
-  function renderProduct(p) {
+  const [products, setProducts]= useState([])
+  useEffect(()=> {
+    getProducts('boards').then((res)=>{setProducts(res)})
+  },[])
+  function renderProduct(product) {
     return (
-      <div key={p.id} className="product">
+      <div key={product.id} className="product">
         <a href="/">
-          <img src={`/images/${p.image}`} alt={p.name} />
-          <h3>{p.name}</h3>
-          <p>${p.price}</p>
+          <img src={`/images/${product.image}`} alt={product.name} />
+          <h3>{product.name}</h3>
+          <p>${product.price}</p>
         </a>
       </div>
     );
@@ -42,7 +36,9 @@ console.log(p);
           </section>
         </main>
       </div>
-      {renderProduct(p)}
+      <section id="products">
+      {products.map(renderProduct)}
+      </section>
       <Footer />
     </>
   );
